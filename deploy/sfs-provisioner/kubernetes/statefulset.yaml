@@ -71,23 +71,23 @@ spec:
           image: quay.io/huaweicloud/sfs-provisioner:latest
           imagePullPolicy: Always
           args:
-          # - "--vpcid=YOUR_VPCID mandatory if you have multiple VPCID"
+          # - "--vpcid=YOUR_VPCID mandatory for CFCR" 
             - "--v=5"
             - "--cloudconfig=$(CLOUD_CONFIG)"
           env:
             - name: CLOUD_CONFIG
-              value: /etc/config/cloud.conf
+              value: /etc/config/cloud-provider.ini #CFCR mod
           volumeMounts:
             - name: cloud-config-dir
               mountPath: /etc/config
-            - name: cloud-data-dir
-              mountPath: /var/lib/cloud/data
+        #    - name: cloud-data-dir                 #CFCR doesn't use cloud-init
+        #     mountPath: /var/lib/cloud/data
       volumes:
         - name: cloud-config-dir
           hostPath:
-            path: /etc/config
-            type: DirectoryOrCreate
-        - name: cloud-data-dir
-          hostPath:
-            path: /var/lib/cloud/data
-            type: DirectoryOrCreate
+            path: /var/vcap/jobs/kubelet/config   # CFCR mod
+            type: Directory
+       # - name: cloud-data-dir                   #CFCR doesn't use cloud-init
+       #   hostPath:
+       #     path: /var/lib/cloud/data
+       #     type: DirectoryOrCreate
